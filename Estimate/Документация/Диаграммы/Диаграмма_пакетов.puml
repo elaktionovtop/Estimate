@@ -1,0 +1,26 @@
+﻿@startuml
+package "Smetа.App" {
+  [WPF Views]
+  [ViewModels]
+}
+
+package "Smeta.Core" {
+  [Services]
+  [Models]
+  [Enums]
+}
+
+package "Smeta.Data" {
+  [Repositories]
+  [Migrations]
+  [DbContext]
+}
+
+database "MS SQL Server" {
+  [Tables]
+}
+
+Smetа.App --> Smeta.Core : Uses
+Smeta.Core --> Smeta.Data : Uses
+Smeta.Data --> "MS SQL Server" : Connects
+@enduml

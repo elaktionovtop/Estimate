@@ -1,1 +1,97 @@
-﻿
+﻿@startuml
+
+class User {
+  -int Id
+  -string Login
+  -string PasswordHash
+  -Role Role
+  -DateTime CreatedDate
+  +bool CheckPassword(string password)
+}
+
+enum Role {
+  Manager
+  Director
+  Admin
+}
+
+class Order {
+  -int Id
+  -int CustomerId
+  -int ConstructionId
+  -int EmployeeId
+  -int Number
+  -DateOnly Date
+  -OrderStatus Status
+  -string Description
+  -decimal Total
+  +decimal CalculateTotal()
+}
+
+enum OrderStatus {
+  New
+  InProgress
+  Completed
+  Cancelled
+}
+
+class Customer {
+  -int Id
+  -string Name
+  -string Phone
+  -string Address
+  -string Email
+}
+
+class Service {
+  -int Id
+  -int GroupId
+  -int UnitId
+  -string Name
+  -decimal Price
+  -string Description
+}
+
+class Material {
+  -int Id
+  -int GroupId
+  -int UnitId
+  -string Name
+  -decimal Price
+  -string Description
+}
+
+class Construction {
+  -int Id
+  -string Name
+  -string Address
+}
+
+class Employee {
+  -int Id
+  -string Name
+  -string Position
+  -string Phone
+  -int UserId
+}
+
+class Company {
+  -int Id
+  -string Name
+  -string Address
+  -string Phone
+  -string Email
+  -string TaxNumber
+}
+
+' Связи
+User "1" -- "1" Employee : Authenticates
+Order "*" -- "1" Customer : Belongs to
+Order "*" -- "1" Construction : For
+Order "*" -- "1" Employee : Managed by
+Order "1" -- "*" OrderService : Includes
+Order "1" -- "*" OrderMaterial : Includes
+OrderService "*" -- "1" Service : References
+OrderMaterial "*" -- "1" Material : References
+
+@enduml

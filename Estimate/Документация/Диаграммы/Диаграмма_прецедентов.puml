@@ -1,15 +1,28 @@
-﻿@startuml
-actor Заказчик
-actor Менеджер
-actor Директор
+@startuml
+left to right direction
 
-rectangle "Система управления работами" {
-  Заказчик --> (Оформить заявку)
-  Менеджер --> (Распределить задачи)
-  Менеджер --> (Планировать сроки)
-  Менеджер --> (Вести прайс-лист)
-  Менеджер --> (Формировать отчёты)
-  Директор --> (Просматривать аналитику)
-  Директор --> (Контролировать исполнение)
+actor "Менеджер" as Manager
+actor "Директор" as Director
+actor "Администратор" as Admin
+
+rectangle "Приложение "Смета"" {
+    usecase "Создание нового заказа" as UC1
+    usecase "Редактирование заказов" as UC2
+    usecase "Ведение справочников и данных" as UC3
+    usecase "Формирование отчетов" as UC4
+    usecase "Поиск и просмотр данных" as UC5
+    usecase "Закрытие заказа" as UC6
 }
+
+Manager --> UC1
+Manager --> UC2
+Manager --> UC3
+Manager --> UC4
+Manager --> UC5
+Manager --> UC6
+
+Director --> UC4
+
+Admin --> UC3
+
 @enduml
