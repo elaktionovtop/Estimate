@@ -1,0 +1,65 @@
+﻿03.31
+решение Estimate
+проект Estimate
+
+подключаем пакеты к решению (можно и к проекту)
+CommunityToolkit.Mvvm
+Microsoft.EntityFrameworkCore
+Microsoft.EntityFrameworkCore.SqlServer
+Microsoft.EntityFrameworkCore.Tools
+Microsoft.Extensions.Configuration
+Microsoft.Extensions.Configuration.Json
+
+создаем папки
+Estimate/
+├── Models/          # Классы сущностей (User, Order...)
+├── ViewModels/      # VM для окон
+├── Views/           # Окна (MainWindow, AdminPanel...)
+├── Services/        # Логика (OrderService, AuthService)
+├── Data/            # EF Core (AppDbContext, миграции)
+├── Contracts/       # Интерфейсы (IOrderService...)
+└── appsettings.json # Конфигурации
+├── Database/        # Файлы БД
+
+создаем классы моделей 
+Models/AppUser.cs
+Models/Order.cs
+
+создаем DbContext
+Data/AppDbContext.cs
+"Server=(localdb)\\MSSQLLocalDB;Database=EstimateDB"
+
+компилируем (Собрать решение)
+добавляем миграцию
+Add-Migration InitialCreate
+Update-Database
+
+переносим БД в папку проекта
+находим файл *.mdf в папке C:\Users\<User>
+создаем папку Database в Estimate
+переносим в эту папку файлы
+EstimateDB.mdf
+EstimateDB_log.ldf
+изменяем строку подключения
+"Server=(localdb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database\\EstimateDB.mdf"
+устанавливаем копирование в выходной каталог
+(закрываем VS и) удаляем mdf и ldf в папке C:\Users\<User>
+
+реализуем окно авторизации
+окно авторизации Views/LoginWindow.xaml 
+код авторизации ViewModels/LoginViewModel.cs
+сервис Service/AuthService.cs
+доступ к ресурсам App.cs
+
+реализуем проверку авторизации
+класс инициализации Data\DbInitializer.cs
+вызов инициализации App.cs
+
+создаем тестовый проект EstimateTest (xunit)
+добавляем пакеты в тестовый проект
+Moq
+EntityFrameworkCore.InMemory
+создаем тестовый класс AuthServiceTests.cs 
+тестируем AuthService
+
+04.01

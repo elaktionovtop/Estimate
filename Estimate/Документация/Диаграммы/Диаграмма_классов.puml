@@ -5,7 +5,7 @@ class User {
   -string Login
   -string PasswordHash
   -Role Role
-  -DateTime CreatedDate
+  -DateOnly CreatedDate
   +bool CheckPassword(string password)
 }
 
@@ -21,8 +21,9 @@ class Order {
   -int ConstructionId
   -int EmployeeId
   -int Number
-  -DateOnly Date
   -OrderStatus Status
+  -DateOnly CreatedDate
+  -DateOnly CompletedDate
   -string Description
   -decimal Total
   +decimal CalculateTotal()
@@ -45,20 +46,37 @@ class Customer {
 
 class Service {
   -int Id
-  -int GroupId
   -int UnitId
   -string Name
   -decimal Price
   -string Description
 }
 
+class OrderService {
+  -int Id
+  -int OrderId
+  -int ServiceId
+  -decimal Amount
+}
+
 class Material {
   -int Id
-  -int GroupId
   -int UnitId
   -string Name
   -decimal Price
   -string Description
+}
+
+class OrderMaterial {
+  -int Id
+  -int OrderId
+  -int MaterialId
+  -decimal Amount
+}
+
+class Unit {
+  -int Id
+  -string Name
 }
 
 class Construction {
@@ -77,6 +95,7 @@ class Employee {
 
 class Company {
   -int Id
+  -int DirectorId
   -string Name
   -string Address
   -string Phone
@@ -92,6 +111,9 @@ Order "*" -- "1" Employee : Managed by
 Order "1" -- "*" OrderService : Includes
 Order "1" -- "*" OrderMaterial : Includes
 OrderService "*" -- "1" Service : References
+Service "*" -- "1" Unit : References
 OrderMaterial "*" -- "1" Material : References
+Material "*" -- "1" Unit : References
+Company "1" -- "1" Employee : References
 
 @enduml
