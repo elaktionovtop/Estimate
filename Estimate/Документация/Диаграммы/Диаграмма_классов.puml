@@ -18,12 +18,11 @@ enum Role {
 class Order {
   -int Id
   -int CustomerId
-  -int ConstructionId
   -int EmployeeId
-  -int Number
+  -int ConstructionId
   -OrderStatus Status
-  -DateOnly CreatedDate
-  -DateOnly CompletedDate
+  -DateOnly CreationDate
+  -DateOnly CompletionDate
   -string Description
   -decimal Total
   +decimal CalculateTotal()
@@ -44,7 +43,7 @@ class Customer {
   -string Email
 }
 
-class Service {
+class Work {
   -int Id
   -int UnitId
   -string Name
@@ -52,11 +51,11 @@ class Service {
   -string Description
 }
 
-class OrderService {
+class OrderWork {
   -int Id
   -int OrderId
   -int ServiceId
-  -decimal Amount
+  -decimal Quantity
 }
 
 class Material {

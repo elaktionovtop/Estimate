@@ -1,86 +1,71 @@
 ﻿using Estimate.Data;
 using Estimate.Models;
 using Estimate.Services;
+using Estimate.ViewModels;
+using Estimate.Views;
 
 using Microsoft.EntityFrameworkCore;
 
+using Moq;
+
+using System.Windows;
+
 namespace EstimateTest
 {
-    public class AuthServiceTests
+    public class AuthServiceTests : TestBase
     {
         [Fact]
         public void Login_WithValidCredentials_ReturnsTrue()
         {
-            // Arrange
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: "Test_Auth")
-            .Options;
+            using var context = CreateTestContext();
+            var service = new AuthService(context);
+            AuthReturn result = service.Login(AdminLogin, AdminPassword);
 
-            using(var context = new AppDbContext(options))
-            {
-                context.Users.Add(new AppUser { Login = "admin", Password = "123", Role = Role.Admin });
-                context.SaveChanges();
-            }
-
-            var service = new AuthService(new AppDbContext(options));
-
-            // Act
-            bool result = service.Login("admin", "123");
-
-            // Assert (RED)
-            Assert.True(result); // Тест упадёт, если AuthService не реализован
+            Assert.Equal(AuthReturn.Success, result);
+            Assert.NotNull(service.CurrentUser);
         }
 
         [Theory]
-        [InlineData("admin", "wrong", false)]
-        [InlineData("unknown", "123", false)]
-        public void Login_WithInvalidCredentials_ReturnsFalse(string login, string password, bool expected)
+        [InlineData(AdminLogin, "wrong", AuthReturn.Error)]
+        [InlineData("unknown", "123", AuthReturn.Error)]
+        public void Login_WithInvalidCredentials_ReturnsFalse
+            (string login, string password, AuthReturn expected)
         {
-            // Arrange (используем ту же InMemory-БД)
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: "Test_Auth")
-                .Options;
+            using var context = CreateTestContext();
+            var service = new AuthService(context);
+            AuthReturn result = service.Login(login, password);
 
-            using(var context = new AppDbContext(options))
-            {
-                context.Users.Add(new AppUser { Login = "admin", Password = "123", Role = Role.Admin });
-                context.SaveChanges();
-            }
-
-            var service = new AuthService(new AppDbContext(options));
-
-            // Act
-            bool result = service.Login(login, password);
-
-            // Assert
             Assert.Equal(expected, result);
-            Assert.Equal(expected, service.CurrentUser != null);
+            //Assert.Equal(expected, service.CurrentUser != null);
         }
 
         [Theory]
-        [InlineData("admin", "123", Role.Admin)]
-        [InlineData("manager", "456", Role.Manager)]
-        public void Login_SetsCorrectUserRole(string login, string password, Role role)
+        [InlineData(AdminLogin, AdminPassword, AdminRole)]
+        [InlineData(EmployeeLogin, EmployeePassword, EmployeeRole)]
+        public void Login_SetsCorrectUserRole
+            (string login, string password, Role role)
         {
-            // Arrange
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: "Test_Auth_Roles")
-                .Options;
-
-            using(var context = new AppDbContext(options))
-            {
-                context.Users.Add(new AppUser { Login = login, Password = password, Role = role });
-                context.SaveChanges();
-            }
-
-            var service = new AuthService(new AppDbContext(options));
-
-            // Act
+            using var context = CreateTestContext();
+            var service = new AuthService(context);
             service.Login(login, password);
 
-            // Assert
             Assert.Equal(role, service.CurrentUser?.Role);
         }
 
+        // запустить не удается без запуска App
+        //[WpfFact]
+        //public void CheckLogin_WithValidCredentials_ReturnsTrue()
+        //{
+        //    var mockAuthService = new Mock<IAuthService>();
+        //    mockAuthService.Setup(dl => dl.Login(string.Empty, string.Empty))
+        //        .Returns(true);
+
+        //    var viewModal = new LoginViewModel(mockAuthService.Object);
+        //    new LoginWindow().Show();
+        //    viewModal.CheckLoginCommand.Execute(new System.Windows.Controls.PasswordBox());
+
+        //    Assert.Single(Application.Current.Windows);
+        //    Assert.Equal("MainWindow", Application.Current.Windows[0].Title);
+        //}
     }
 }

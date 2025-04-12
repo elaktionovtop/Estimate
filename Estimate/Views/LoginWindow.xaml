@@ -5,78 +5,17 @@
         xmlns:app="clr-namespace:Estimate"
         xmlns:local="clr-namespace:Estimate.Views"
         xmlns:vm="clr-namespace:Estimate.ViewModels"
-        Title="Авторизация" Height="200" Width="300">
+        Title="Авторизация" Height="300" Width="300">
 
 
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-
-        <!--<TextBox x:Name="LoginTextBox" 
-         Text="{Binding Login}"
-         Width="150"
-         Margin="5"
-                 
-         Tag="Логин">
-            <TextBox.Style>
-                <Style TargetType="TextBox">
-
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="TextBox">
-                                <Border BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                SnapsToDevicePixels="True">
-                                    <Grid>
-                                        <ScrollViewer x:Name="PART_ContentHost"/>
-                                         
-                                        <TextBlock Text="{TemplateBinding Tag}" 
-                                           Foreground="Gray"
-                                           Margin="8,0,0,0"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Left"
-                                           IsHitTestVisible="False"
-                                           Visibility="Collapsed"/>
-                                    </Grid>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-
-                    <Style.Triggers>
-                        <Trigger Property="Text" Value="">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TextBox">
-                                        <Border BorderBrush="{TemplateBinding BorderBrush}" 
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        Background="Transparent"
-                                        SnapsToDevicePixels="True">
-                                            <Grid>
-                                                <ScrollViewer x:Name="PART_ContentHost"/>
-                                                <TextBlock Text="{TemplateBinding Tag}" 
-                                                   Foreground="Gray"
-                                                   Margin="8,0,0,0"
-                                                   VerticalAlignment="Center"
-                                                   IsHitTestVisible="False"/>
-                                            </Grid>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBox.Style>
-        </TextBox>
-        <PasswordBox x:Name="PasswordBox" Width="150" Margin="5"/>-->
 
         <TextBlock Margin="0,0,0,5"
                    Text="Логин"
                    Width="200"
                    />
 
-        <TextBox x:Name="UsernameTextBox"
-                 Text="{Binding Login}"
+        <TextBox Text="{Binding Login}"
                  Margin="0,0,0,10"
                  Width="200"
                  />
@@ -90,7 +29,15 @@
                      Margin="0,0,0,10"
                      Width="200"
                      />
-        
+
+        <StackPanel Orientation="Horizontal"
+                     Margin="0,0,0,10"
+                     Width="200"
+                    >
+            <TextBlock Text="Число попыток: "/>
+            <TextBlock Text="{Binding AttemptsCount}"/>
+        </StackPanel>
+
         <Button Command="{Binding CheckLoginCommand}" Content="Войти" 
                 Width="100" Margin="5" 
                 CommandParameter="{Binding ElementName=PasswordBox}"/>

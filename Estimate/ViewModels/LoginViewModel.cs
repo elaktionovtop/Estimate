@@ -13,6 +13,8 @@ using CommunityToolkit.Mvvm.Input;
 using Estimate.Services;
 using Estimate.Views;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Estimate.ViewModels
 {
     public partial class LoginViewModel : ObservableObject
@@ -20,10 +22,10 @@ namespace Estimate.ViewModels
         private readonly IAuthService _authService;
 
         [ObservableProperty]
-        private string _login = string.Empty;
+        private string _login = "admin";
 
-        //[ObservableProperty]
-        //private string _password = "";
+        [ObservableProperty]
+        private int _attemptsCount = 3;
 
         public LoginViewModel(IAuthService authService)
             => _authService = authService;
@@ -31,10 +33,24 @@ namespace Estimate.ViewModels
         [RelayCommand]
         private void CheckLogin(PasswordBox passwordBox)
         {
-            if(_authService.Login(Login, passwordBox.Password))
+            if (--AttemptsCount == 0)
             {
-                new MainWindow().Show();
-                Application.Current.Windows.OfType<LoginWindow>().First().Close();
+                MessageBox.Show("Число возможных попыток исчерпано");
+                Application.Current.Shutdown();
+            }
+            switch(_authService.Login(Login, passwordBox.Password))
+            {
+                case AuthReturn.Success:
+                    App.Services.GetRequiredService<MainWindow>().Show();
+                    Application.Current.Windows.OfType<LoginWindow>().First().Close();
+                    break;
+                case AuthReturn.Failure:
+                    MessageBox.Show("Число возможных попыток исчерпано");
+                    Application.Current.Shutdown();
+                    break;
+                case AuthReturn.Error:
+                    MessageBox.Show("Неверный логин или пароль");
+                    break;
             }
         }
     }

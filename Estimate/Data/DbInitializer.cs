@@ -18,10 +18,19 @@ namespace Estimate.Data
             {
                 var users = new AppUser[]
                 {
-                new AppUser { Login = "admin", Password = "123", Role = Role.Admin },
-                new AppUser { Login = "manager", Password = "456", Role = Role.Manager }
+                    new AppUser 
+                    { 
+                        Login = "admin", 
+                        Password = "123", 
+                        Role = Role.Admin 
+                    },
+                    new AppUser 
+                    { 
+                        Login = "manager", 
+                        Password = "456", 
+                        Role = Role.Manager 
+                    }
                 };
-
                 context.Users.AddRange(users);
                 context.SaveChanges();
             }
