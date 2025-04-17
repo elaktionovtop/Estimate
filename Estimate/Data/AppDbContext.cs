@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using Estimate.Models;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Estimate.Data
 {
@@ -8,7 +11,6 @@ namespace Estimate.Data
     {
         public DbSet<AppUser> Users => Set<AppUser>();
         public DbSet<Employee> Employees => Set<Employee>();
-
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<Construction> Constructions => Set<Construction>();
         public DbSet<MeasureUnit> MeasureUnits => Set<MeasureUnit>();
@@ -18,27 +20,10 @@ namespace Estimate.Data
         public DbSet<OrderWork> OrderWorks => Set<OrderWork>();
         public DbSet<OrderMaterial> OrderMaterials => Set<OrderMaterial>();
 
-        public AppDbContext()
-            : base()
-        { }
-
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
-        { 
-        }
-
-        public void Load()
         {
-            Users.Load();
-            Employees.Load();
-
-            Works.Include(o => o.MeasureUnit).Load();
-            OrderWorks.Include(o => o.Work).Load();
-            Orders.Include(o => o.Materials).Include(o => o.Works).Load();
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database\\EstimateDB.mdf");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -70,13 +55,6 @@ namespace Estimate.Data
                 .HasForeignKey(om => om.MaterialId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //// Employee → User (один пользователь может быть привязан к сотруднику)
-            //modelBuilder.Entity<Employee>()
-            //    .HasOne(e => e.)
-            //    .WithMany()
-            //    .HasForeignKey(e => e.UserId)
-            //    .OnDelete(DeleteBehavior.Restrict);
-
             // Material → MeasureUnit
             modelBuilder.Entity<Material>()
                 .HasOne(m => m.MeasureUnit)
@@ -92,21 +70,28 @@ namespace Estimate.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
-        //public class ContextFactory :
-        //    IDesignTimeDbContextFactory<AppDbContext>
-        //{
-        //    public AppDbContext CreateDbContext(string[] args)
-        //    {
-        //        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+        public class ContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+        {
+            public AppDbContext CreateDbContext(string[] args)
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+                optionsBuilder.UseSqlServer(ConnectionString);
+                return new AppDbContext(optionsBuilder.Options);
+            }
 
-        //        ConfigurationBuilder configurationBuilder = new();
-        //        configurationBuilder.SetBasePath(Directory.GetCurrentDirectory());
-        //        configurationBuilder.AddJsonFile("config.json");
-        //        IConfigurationRoot config = configurationBuilder.Build();
+            public static string ConnectionString 
+            {
+                get
+                {
+                    var config = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("config.json")
+                        .Build();
 
-        //        string connectionString = config.GetConnectionString("DefaultConnection");
-        //        optionsBuilder.UseSqlServer(connectionString);
-        //        return new AppDbContext(optionsBuilder.Options);
-        //    }
+                    return config.GetConnectionString("DefaultConnection");
+                }
+            }
+        }
+
     }
 }

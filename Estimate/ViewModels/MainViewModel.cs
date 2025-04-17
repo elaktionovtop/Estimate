@@ -21,138 +21,126 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Estimate.ViewModels
 {
-    public partial class MainViewModel : BaseCollectionViewModel<Order>
+    public partial class MainViewModel : ObservableObject
     {
-       readonly OrderService? _orderService;
+        readonly IOrderService _orderService;
 
-        //[ObservableProperty]
-        //private ObservableCollection<Order> _items;
+        [ObservableProperty]
+        private ObservableCollection<Order> _orders;
 
-        //[ObservableProperty]
-        //private Order? _selectedItem;
+        [ObservableProperty]
+        private Order? _selectedOrder;
 
-        //[ObservableProperty]
-        //ObservableCollection<Order> _orders;
-
-        //[ObservableProperty]
-        //Order _currentOrder;
-
-        //[ObservableProperty]
-        //int _orderCustomerId;
-
-        //[ObservableProperty]
-        //int _orderEmployeeId;
-
-        //[ObservableProperty]
-        //int _orderConstructionId;
-
-        //[ObservableProperty]
-        //string _orderDescription;
-
-        //public MainViewModel(ObservableCollection<Order> items) : base(items) 
-        //{
-        //}
-
-        public MainViewModel() : base
-            (new ObservableCollection<Order>())
+        public MainViewModel(IOrderService orderService)
         {
+            _orderService = orderService;
+            Orders = _orderService.GetAllOrders().ToObservableCollection();
+            if(Orders.Count > 0)
+                SelectedOrder = Orders[0];
         }
-
-        public MainViewModel(IOrderService orderService) : base
-            (new ObservableCollection<Order>(orderService.GetAllOrders()))
-        {
-        }
-
-        //[RelayCommand]
-        //private void CreateOrder()
-        //{
-        //    OrderViewModel orderViewModel = new OrderViewModel();
-        //    OrderWindow orderWindow = new OrderWindow(orderViewModel);
-        //    if(orderWindow.ShowDialog() == true)
-        //    {
-        //        Order newOrder = orderViewModel.Order;
-        //        Items.Add(newOrder);
-        //        SelectedItem = newOrder;
-        //    }
-        //}
 
         [RelayCommand]
         private void CreateOrder()
         {
-            var viewModel = CreateOrderViewModel();
-
-            var window = new OrderWindow(viewModel);
-            if(window.ShowDialog() == true)
+            var orderViewModel = CreateOrderViewModel(new Order());
+            try
             {
-                Items.Add(viewModel.Order);
-                SelectedItem = viewModel.Order;
+                if(ShowOrderDialog(orderViewModel) == true)
+                {
+                    _orderService.AddOrder(orderViewModel.Order);
+                    Orders.Add(orderViewModel.Order);
+                    SelectedOrder = orderViewModel.Order;
+                }
             }
-        }
-
-        [RelayCommand]
-        private void DeleteOrder()
-        { 
-            if (SelectedItem is not null)
+            catch (ArgumentException ex)
             {
-                Items.Remove(SelectedItem);
+                MessageBox.Show(ex.Message, "Ошибка в данных заказа",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         [RelayCommand]
         private void EditOrder()
         {
-            if(SelectedItem is null)
-            {
+            if(SelectedOrder is null)
                 return;
-            }
-            OrderViewModel orderViewModel = new OrderViewModel(SelectedItem);
-            OrderWindow orderWindow = new OrderWindow(orderViewModel);
-            if(orderWindow.ShowDialog() == true)
+
+            var editedOrder = new Order
             {
-                Order newOrder = orderViewModel.Order;
-                Items.Add(newOrder);
-                SelectedItem = newOrder;
+                Id = SelectedOrder.Id,
+                CustomerId = SelectedOrder.CustomerId,
+                EmployeeId = SelectedOrder.EmployeeId,
+                ConstructionId = SelectedOrder.ConstructionId,
+                Customer = SelectedOrder.Customer!,
+                Employee = SelectedOrder.Employee!,
+                Construction = SelectedOrder.Construction!,
+                Status = SelectedOrder.Status,
+                CreationdDate = SelectedOrder.CreationdDate,
+                CompletionDate = SelectedOrder.CompletionDate,
+                Description = SelectedOrder.Description,
+                Works = new(SelectedOrder.Works),
+                Materials = new(SelectedOrder.Materials)
+            };
+
+            var orderViewModel = CreateOrderViewModel(editedOrder);
+            try
+            {
+                if(ShowOrderDialog(orderViewModel) == true)
+                {
+                    _orderService.UpdateOrder(orderViewModel.Order);
+                    int index = Orders.IndexOf(SelectedOrder);
+                    Orders[index] = orderViewModel.Order;
+                    SelectedOrder = orderViewModel.Order;
+                }
+            }
+            catch(ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка в данных заказа",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        protected virtual OrderViewModel CreateOrderViewModel()
-            => new OrderViewModel(new Order());
-        
-        //[RelayCommand]
-        //private void CompleteOrder()
-        //{
-        //    if(SelectedItem is not null)
-        //    {
-        //        SelectedItem.Status = OrderStatus.Completed;
-        //    }
-        //}
+        [RelayCommand]
+        private void DeleteOrder()
+        {
+            if(SelectedOrder is null)
+                return;
 
-        //[RelayCommand]
-        //private void CancelOrder()
-        //{
-        //    if(SelectedItem is not null)
-        //    {
-        //        SelectedItem.Status = OrderStatus.Cancelled;
-        //    }
-        //}
+            try
+            {
+                int index = Orders.IndexOf(SelectedOrder);
+                _orderService.RemoveOrder(SelectedOrder);
+                Orders.Remove(SelectedOrder);
+
+                // установить новый выбор
+                if(Orders.Count > 0)
+                {
+                    if(index >= Orders.Count)
+                        index = Orders.Count - 1;
+
+                    SelectedOrder = Orders[index];
+                }
+                else
+                {
+                    SelectedOrder = null;
+                }
+
+            }
+            catch(InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка удаления",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        protected virtual OrderViewModel CreateOrderViewModel(Order order)
+            => new OrderViewModel(
+                order,
+                    _orderService.GetAllCustomers().ToObservableCollection(),
+                    _orderService.GetAllEmployees().ToObservableCollection(),
+                    _orderService.GetAllConstructions().ToObservableCollection());
+
+        protected virtual bool? ShowOrderDialog(OrderViewModel orderViewModel)
+            => new OrderWindow(orderViewModel).ShowDialog();
     }
 }
-
-
-//try
-//{
-//    _orderService.CreateOrder(new Order
-//    {
-//        CustomerId = OrderCustomerId,
-//        EmployeeId = OrderEmployeeId,
-//        ConstractionId = OrderConstructionId,
-//        Description = OrderDescription
-
-//    });
-//    Orders.Add(CurrentOrder); // Обновляем UI ???
-//}
-//catch(Exception ex)
-//{
-//    MessageBox.Show(ex.Message);
-//}
-

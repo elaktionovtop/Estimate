@@ -1,5 +1,5 @@
 ﻿{
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database\\EstimateDB.mdf"
+    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Initial Catalog =EstimateDB"
   }
 }

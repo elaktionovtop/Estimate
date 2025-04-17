@@ -1,141 +1,85 @@
-﻿using CommunityToolkit.Mvvm.Input;
-
-using Estimate.Data;
-using Estimate.Models;
-
-using Microsoft.Extensions.DependencyInjection;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Windows;
+using Estimate.Models;
 using Estimate.Services;
+using System.Windows.Controls;
+using Estimate.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Estimate.ViewModels
 {
     public partial class OrderViewModel : ObservableObject
     {
-        IOrderService _orderService;
+        IOrderService _orderService = App.Services.GetRequiredService<IOrderService>();
+
+        public Order Order { get; }
+
+        public ObservableCollection<Customer> Customers { get; }
+        public ObservableCollection<Employee> Employees { get; }
+        public ObservableCollection<Construction> Constructions { get; }
+
+        public ObservableCollection<EnumDisplay<OrderStatus>>
+            Statuses { get; } = Order.Statuses;
 
         [ObservableProperty]
-        private List<Customer> _customers;
-        [ObservableProperty]
-        private Customer? _selectedCustomer;
+        private EnumDisplay<OrderStatus> selectedStatus;
 
-        [ObservableProperty]
-        private List<Employee> _employees;
-        [ObservableProperty]
-        private Employee? _selectedEmployee;
+        [ObservableProperty] private Customer? selectedCustomer;
+        [ObservableProperty] private Employee? selectedEmployee;
+        [ObservableProperty] private Construction? selectedConstruction;
+        [ObservableProperty] private DateTime creationDateTime;
+        [ObservableProperty] private DateTime? completionDateTime;
+        [ObservableProperty] private string description = string.Empty;
 
-        [ObservableProperty]
-        private List<Construction> _constructions;
-        [ObservableProperty]
-        private Construction? _selectedConstruction;
-
-        [ObservableProperty]
-        private List<OrderStatus> _statusList;
-        [ObservableProperty]
-        private OrderStatus _currentStatus;
-
-        [ObservableProperty]
-        private DateOnly _creationDate;
-        [ObservableProperty]
-        private DateOnly? _completionDate;
-
-        [ObservableProperty]
-        private string _description;
-
-        [ObservableProperty]
-        private bool _isOK = false;
-
-        public Order Order { get; set; }
-
-        //public Order Order => new Order
-        //{
-        //    Customer = SelectedCustomer,
-        //    Employee = SelectedEmployee,
-        //    Construction = SelectedConstruction,
-        //    Status = CurrentStatus,
-        //    CreationdDate = CreationDate,
-        //    CompletionDate = CompletionDate,
-        //    Description = Description
-        //};
-
-        // кнопка ОК должна быть доступна или нет
-        // в зависимости от этой переменной !!! ???
-
-        public OrderViewModel(IOrderService orderService)
-            => _orderService = orderService;
-
-        public OrderViewModel(IOrderService orderService, Order order)
+        public OrderViewModel(
+            Order order,
+            ObservableCollection<Customer> customers,
+            ObservableCollection<Employee> employees,
+            ObservableCollection<Construction> constructions)
         {
-            _orderService = orderService;
             Order = order;
-        }
 
-        public OrderViewModel(Order order)
-        {
+            Customers = customers;
+            Employees = employees;
+            Constructions = constructions;
+
+            // заполняем поля из модели
             SelectedCustomer = order.Customer;
             SelectedEmployee = order.Employee;
             SelectedConstruction = order.Construction;
-            CurrentStatus = order.Status;
-            CreationDate = order.CreationdDate;
-            CompletionDate = order.CompletionDate;
+            SelectedStatus = Statuses.FirstOrDefault
+                (s => s.Value == order.Status)
+                ?? Statuses.First();
+            CreationDateTime = order.CreationDateTime;
+            CompletionDateTime = order.CompletionDateTime;
             Description = order.Description;
         }
 
-        // как закрыть окно из ViewModel ?
         [RelayCommand]
-        private void Complete()
+        private void Apply(Window window)
         {
-            Order.Customer = SelectedCustomer;
-            Order.Employee = SelectedEmployee;
-            Order.Construction = SelectedConstruction;
-            Order.Status = CurrentStatus;
-            Order.CreationdDate = CreationDate;
-            Order.CompletionDate = CompletionDate;
-            Order.Description = Description;
+            try
+            {
+                Order.CustomerId = SelectedCustomer?.Id ?? 0;
+                Order.EmployeeId = SelectedEmployee?.Id ?? 0;
+                Order.ConstructionId = SelectedConstruction?.Id ?? 0;
+                Order.Customer = SelectedCustomer!;
+                Order.Employee = SelectedEmployee!;
+                Order.Construction = SelectedConstruction!;
+                Order.Status = SelectedStatus.Value;
+                Order.CreationDateTime = CreationDateTime;
+                Order.CompletionDateTime = CompletionDateTime;
+                Order.Description = Description;
 
-            IsOK = _orderService.IsValid(Order);
-        }
-
-        // закрытие окна по кнопке закрытия
-        // или триггер на кнопку Canscek ???
-        //[RelayCommand]
-        //private void Cancel()
-        //{
-        //}
-
-        bool CheckData()
-        {
-            bool result = true;
-            result = result && string.IsNullOrEmpty(Description);
-            return result;
-        }
-
-        [RelayCommand]
-        private void AddWork()
-        {
-        }
-
-        [RelayCommand]
-        private void DeleteWork()
-        {
-        }
-
-        [RelayCommand]
-        private void AddMaterial()
-        {
-        }
-
-        [RelayCommand]
-        private void DeleteMaterial()
-        {
+                window.DialogResult = true;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
     }
 }

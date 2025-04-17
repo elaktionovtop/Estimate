@@ -38,20 +38,22 @@ namespace Estimate.ViewModels
                 MessageBox.Show("Число возможных попыток исчерпано");
                 Application.Current.Shutdown();
             }
-            switch(_authService.Login(Login, passwordBox.Password))
+
+            if (_authService.IsLoginValid(Login, passwordBox.Password))
             {
-                case AuthReturn.Success:
-                    App.Services.GetRequiredService<MainWindow>().Show();
-                    Application.Current.Windows.OfType<LoginWindow>().First().Close();
-                    break;
-                case AuthReturn.Failure:
-                    MessageBox.Show("Число возможных попыток исчерпано");
-                    Application.Current.Shutdown();
-                    break;
-                case AuthReturn.Error:
-                    MessageBox.Show("Неверный логин или пароль");
-                    break;
+                App.Services.GetRequiredService<MainWindow>().Show();
+                Application.Current.Windows
+                    .OfType<LoginWindow>().First().Close();
             }
+            else
+            {
+                MessageBox.Show("Неверный логин или пароль");
+            }
+        }
+        [RelayCommand]
+        private void Cancel(PasswordBox passwordBox)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

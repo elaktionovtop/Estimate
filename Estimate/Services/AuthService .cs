@@ -14,7 +14,7 @@ namespace Estimate.Services
     public interface IAuthService
     {
         AppUser? CurrentUser { get; }
-        AuthReturn Login(string login, string password);
+        bool IsLoginValid(string login, string password);
     }
 
     public class AuthService : IAuthService
@@ -26,16 +26,13 @@ namespace Estimate.Services
 
         public AuthService(AppDbContext db) => _db = db;
 
-        public AuthReturn Login(string login, string password)
+        public bool IsLoginValid(string login, string password)
         {
             CurrentUser = _db.Users?.FirstOrDefault(u =>
                 u.Login == login && u.Password == password);
-            return CurrentUser == null ?
-                AuthReturn.Error : AuthReturn.Success;
+            return !(CurrentUser == null);
         }
     }
-
-    public enum AuthReturn {  Success, Error, Failure }
 }
 
 

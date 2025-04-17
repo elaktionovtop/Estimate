@@ -14,24 +14,26 @@ using System.Windows.Media;
 
 namespace EstimateTest
 {
+    // !!! добавить тест на удаление
+
     public class OrderServiceTests : TestBase
     {
         [Fact]
         public void CreateOrder_ShouldAddOrderToDatabase()
         {
-            using var context = CreateTestContext();
+            using var context = TestBase.CreateContext();
             var service = new OrderService(context);
-            var newOrder = new Order 
+            var newOrder = new Order
             {
-                CustomerId = OrderCustomerId,
-                EmployeeId = OrderEmployeeId,
-                ConstructionId = OrderConstractionId,
-                Description = OrderDescription
+                CustomerId = 1,
+                EmployeeId = 1,
+                ConstructionId = 1,
+                Description = "Order_descr_1"
             };
-            service.CreateOrder(newOrder);
+            service.AddOrder(newOrder);
 
             Assert.Single(context.Orders);
-            Assert.Equal(OrderDescription, 
+            Assert.Equal("Order_descr_1",
                 context.Orders.First().Description);
         }
 
@@ -40,56 +42,14 @@ namespace EstimateTest
         public void CreateOrder_WithInvalidParams_ThrowsException
             (string description)
         {
-            using var context = CreateTestContext();
+            using var context = TestBase.CreateContext();
             var service = new OrderService(context);
 
             Assert.Throws<ArgumentException>(() =>
-                service.CreateOrder(new Order
+                service.AddOrder(new Order
                 {
                     Description = description
                 }));
         }
-
-//        [Fact]
-//        public void AddWorkToOrder_ShouldCalculateTotal()
-//        {
-//            // Arrange
-//            using var context = CreateTestContext();
-
-//            var service = new OrderService(context);
-//            var order = new Order
-//            {
-//                CustomerId = OrderCustomerId,
-//                EmployeeId = OrderEmployeeId,
-//                ConstructionId = OrderConstractionId,
-//                Description = OrderDescription
-//            };
-//            service.CreateOrder(order);
-//            context.Orders.Add(order);
-//            //context.SaveChanges();
-
-//            // Act
-//            service.AddWorkToOrder(OrderWorkOrderId, OrderWorkWorkId,
-//OrderWorkQuantity); // 2 услуги по 500 руб
-
-//            // Assert
-//            var savedOrder = context.Orders
-//                .Include(o => o.Works)
-//                .First();
-//            Assert.Equal(OrderWorkQuantity * OrderWorkPrice, savedOrder.Total); // 500 * 2
-//            Assert.Single(savedOrder.Works);
-//        }
     }
 }
-
-/*
-    SeedData(context, db =>
-    {
-        db.Users.Add(new AppUser 
-        { 
-            Login = "admin", 
-            Password = "123", 
-            Role = Role.Admin 
-        });
-    });
-*/

@@ -1,5 +1,7 @@
 ﻿using Estimate.ViewModels;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,12 @@ namespace Estimate.Views
         {
             InitializeComponent();
             DataContext = orderViewModel;
+        }
+
+        private void DescriptionTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            DescriptionTextBox.Focus();
+            DescriptionTextBox.SelectAll();
         }
     }
 }

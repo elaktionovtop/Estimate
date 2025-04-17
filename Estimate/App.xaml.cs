@@ -6,6 +6,7 @@ using Estimate.Views;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using System.Collections.ObjectModel;
@@ -28,17 +29,15 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         // Регистрируем зависимости
+
         services.AddDbContext<AppDbContext>(options =>
-                    options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database\\EstimateDB.mdf"),
-                    contextLifetime: ServiceLifetime.Singleton,
-                    optionsLifetime: ServiceLifetime.Singleton);
+            options.UseSqlServer(ContextFactory.ConnectionString),
+            contextLifetime: ServiceLifetime.Singleton,
+            optionsLifetime: ServiceLifetime.Singleton);
 
         services.AddSingleton<IAuthService, AuthService>();
-        //    services.AddSingleton<IAuthService>(provider =>
-        //new AuthService(provider.GetRequiredService<AppDbContext>(), 3));
-
-        services.AddTransient<LoginViewModel>();
-        services.AddTransient<LoginWindow>();
+           services.AddTransient<LoginViewModel>();
+           services.AddTransient<LoginWindow>();
 
         services.AddSingleton<IOrderService, OrderService>();
         services.AddTransient<MainViewModel>();
@@ -46,11 +45,11 @@ public partial class App : Application
 
         Services = services.BuildServiceProvider();
 
-        //Инициализация БД
-        var context = Services.GetRequiredService<AppDbContext>();
-        DbInitializer.Initialize(context); // Добавляем тестовых пользователей
+        // Проверка данных БД
+        DbVerification.Perform(); 
 
-        Services.GetRequiredService<LoginWindow>().Show();
+        //Services.GetRequiredService<LoginWindow>().Show();
+        App.Services.GetRequiredService<MainWindow>().Show();
 
     }
 }

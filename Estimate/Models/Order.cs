@@ -1,8 +1,13 @@
-﻿using System;
+﻿using Estimate.Services;
+
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Estimate.Models
 {
@@ -43,6 +48,40 @@ namespace Estimate.Models
                 }
                 return total;
             }
+        }
+
+        [NotMapped]
+        public static ObservableCollection<EnumDisplay<OrderStatus>>
+            Statuses { get; } = new()
+            {
+                new(OrderStatus.New, "Новый"),
+                new(OrderStatus.InProgress, "В работе"),
+                new(OrderStatus.Completed, "Завершён"),
+                new(OrderStatus.Cancelled, "Отменён")
+            };
+
+        [NotMapped]
+        public string StatusText => 
+            Statuses.FirstOrDefault(s => s.Value == Status).Display;
+
+        DateTime creationDateTime;
+        [NotMapped]
+        public DateTime CreationDateTime
+        {
+            get => CreationdDate.ToDateTime(TimeOnly.MinValue);
+            set=> CreationdDate = DateOnly.FromDateTime(value);
+        }
+
+        DateTime? completionDateTime;
+        [NotMapped]
+        public DateTime? CompletionDateTime
+        {
+            get => CompletionDate.HasValue
+                ? CompletionDate.Value.ToDateTime(TimeOnly.MinValue)
+                : null;
+            set => CompletionDate = value.HasValue
+                ? DateOnly.FromDateTime(value.Value)
+                : null;
         }
     }
 

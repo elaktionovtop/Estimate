@@ -6,46 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Estimate.Migrations
 {
     /// <inheritdoc />
-    public partial class AllModels : Migration
+    public partial class InitDataBase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Orders_Users_UserId",
-                table: "Orders");
-
-            migrationBuilder.RenameColumn(
-                name: "UserId",
-                table: "Orders",
-                newName: "EmployeeId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_Orders_UserId",
-                table: "Orders",
-                newName: "IX_Orders_EmployeeId");
-
-            migrationBuilder.AddColumn<int>(
-                name: "ConstructionId",
-                table: "Orders",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<DateOnly>(
-                name: "CreationdDate",
-                table: "Orders",
-                type: "date",
-                nullable: false,
-                defaultValue: new DateOnly(1, 1, 1));
-
-            migrationBuilder.AddColumn<int>(
-                name: "CustomerId",
-                table: "Orders",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
             migrationBuilder.CreateTable(
                 name: "Constructions",
                 columns: table => new
@@ -83,7 +48,6 @@ namespace Estimate.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -92,12 +56,6 @@ namespace Estimate.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employees_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,6 +72,58 @@ namespace Estimate.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    ConstructionId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreationdDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    CompletionDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Constructions_ConstructionId",
+                        column: x => x.ConstructionId,
+                        principalTable: "Constructions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Materials",
                 columns: table => new
                 {
@@ -122,18 +132,17 @@ namespace Estimate.Migrations
                     UnitId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MeasureUnitId = table.Column<int>(type: "int", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Materials", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Materials_MeasureUnits_MeasureUnitId",
-                        column: x => x.MeasureUnitId,
+                        name: "FK_Materials_MeasureUnits_UnitId",
+                        column: x => x.UnitId,
                         principalTable: "MeasureUnits",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,18 +154,17 @@ namespace Estimate.Migrations
                     UnitId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MeasureUnitId = table.Column<int>(type: "int", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Works", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Works_MeasureUnits_MeasureUnitId",
-                        column: x => x.MeasureUnitId,
+                        name: "FK_Works_MeasureUnits_UnitId",
+                        column: x => x.UnitId,
                         principalTable: "MeasureUnits",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,13 +185,13 @@ namespace Estimate.Migrations
                         column: x => x.MaterialId,
                         principalTable: "Materials",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrderMaterials_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,8 +202,7 @@ namespace Estimate.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     WorkId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -205,34 +212,19 @@ namespace Estimate.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrderWorks_Works_WorkId",
                         column: x => x.WorkId,
                         principalTable: "Works",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_ConstructionId",
-                table: "Orders",
-                column: "ConstructionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerId",
-                table: "Orders",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_UserId",
-                table: "Employees",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Materials_MeasureUnitId",
+                name: "IX_Materials_UnitId",
                 table: "Materials",
-                column: "MeasureUnitId");
+                column: "UnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderMaterials_MaterialId",
@@ -245,6 +237,21 @@ namespace Estimate.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_ConstructionId",
+                table: "Orders",
+                column: "ConstructionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CustomerId",
+                table: "Orders",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_EmployeeId",
+                table: "Orders",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderWorks_OrderId",
                 table: "OrderWorks",
                 column: "OrderId");
@@ -255,49 +262,31 @@ namespace Estimate.Migrations
                 column: "WorkId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Works_MeasureUnitId",
+                name: "IX_Works_UnitId",
                 table: "Works",
-                column: "MeasureUnitId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Orders_Constructions_ConstructionId",
-                table: "Orders",
-                column: "ConstructionId",
-                principalTable: "Constructions",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Orders_Customers_CustomerId",
-                table: "Orders",
-                column: "CustomerId",
-                principalTable: "Customers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Orders_Employees_EmployeeId",
-                table: "Orders",
-                column: "EmployeeId",
-                principalTable: "Employees",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                column: "UnitId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Orders_Constructions_ConstructionId",
-                table: "Orders");
+            migrationBuilder.DropTable(
+                name: "OrderMaterials");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Orders_Customers_CustomerId",
-                table: "Orders");
+            migrationBuilder.DropTable(
+                name: "OrderWorks");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Orders_Employees_EmployeeId",
-                table: "Orders");
+            migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Materials");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Works");
 
             migrationBuilder.DropTable(
                 name: "Constructions");
@@ -309,57 +298,7 @@ namespace Estimate.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "OrderMaterials");
-
-            migrationBuilder.DropTable(
-                name: "OrderWorks");
-
-            migrationBuilder.DropTable(
-                name: "Materials");
-
-            migrationBuilder.DropTable(
-                name: "Works");
-
-            migrationBuilder.DropTable(
                 name: "MeasureUnits");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Orders_ConstructionId",
-                table: "Orders");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Orders_CustomerId",
-                table: "Orders");
-
-            migrationBuilder.DropColumn(
-                name: "ConstructionId",
-                table: "Orders");
-
-            migrationBuilder.DropColumn(
-                name: "CreationdDate",
-                table: "Orders");
-
-            migrationBuilder.DropColumn(
-                name: "CustomerId",
-                table: "Orders");
-
-            migrationBuilder.RenameColumn(
-                name: "EmployeeId",
-                table: "Orders",
-                newName: "UserId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_Orders_EmployeeId",
-                table: "Orders",
-                newName: "IX_Orders_UserId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Orders_Users_UserId",
-                table: "Orders",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
     }
 }
