@@ -23,7 +23,7 @@ namespace EstimateTest
             // Assert
             Assert.Single(ViewModel.Orders); // было 2, стало 1
             Assert.Null(ViewModel.SelectedOrder);
-            _orderServiceMock.Verify(s => s.RemoveOrder(It.IsAny<Order>()), Times.Once);
+            _orderServiceMock.Verify(s => s.Remove(It.IsAny<Order>()), Times.Once);
         }
     }
 }

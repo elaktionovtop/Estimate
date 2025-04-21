@@ -44,7 +44,7 @@ namespace EstimateTest
             Assert.Equal("Обновлённый заказ", ViewModel.SelectedOrder.Description);
             Assert.Contains(ViewModel.SelectedOrder, ViewModel.Orders);
 
-            _orderServiceMock.Verify(s => s.UpdateOrder(It.Is<Order>(
+            _orderServiceMock.Verify(s => s.Update(It.Is<Order>(
                 o => o.Id == _original.Id && o.Description == "Обновлённый заказ"
             )), Times.Once);
         }

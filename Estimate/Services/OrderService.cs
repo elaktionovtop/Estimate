@@ -11,99 +11,81 @@ using System.Threading.Tasks;
 
 namespace Estimate.Services
 {
-    public interface IOrderService
+    public class OrderService : CrudService<Order>
     {
-        IEnumerable<Customer> GetAllCustomers();
-        IEnumerable<Employee> GetAllEmployees();
-        IEnumerable<Construction> GetAllConstructions();
+        public OrderService(AppDbContext db) : base(db) { }
 
-        IEnumerable<Order> GetAllOrders();
-        void AddOrder(Order order);
-        void UpdateOrder(Order order);
-        void RemoveOrder(Order order);
-        void ValidateOrder(Order order);
-    }
+        public IEnumerable<Customer> GetAllCustomers() 
+            => _db.Customers;
+        public IEnumerable<Employee> GetAllEmployees() 
+            => _db.Employees;
+        public IEnumerable<Construction> GetAllConstructions() 
+            => _db.Constructions;
 
-    public class OrderService : IOrderService
-    {
-        private readonly AppDbContext _db;
-
-        public OrderService(AppDbContext db) => _db = db;
-
-        public IEnumerable<Customer> GetAllCustomers() =>
-            _db.Customers;
-        public IEnumerable<Employee> GetAllEmployees() =>
-            _db.Employees;
-        public IEnumerable<Construction> GetAllConstructions() =>
-            _db.Constructions;
-
-        public IEnumerable<Order> GetAllOrders() =>
-            _db.Orders
+        public override IEnumerable<Order> GetAll() 
+            => _db.Orders
                 .Include(o => o.Construction)
                 .Include(o => o.Customer)
                 .Include(o => o.Employee)
-                .Include(o => o.Works).ThenInclude(w => w.Work).ThenInclude(mu => mu.MeasureUnit)
-                .Include(o => o.Materials).ThenInclude(m => m.Material).ThenInclude(mu => mu.MeasureUnit)
+                .Include(o => o.Works)
+                    .ThenInclude(w => w.Work)
+                        .ThenInclude(mu => mu.MeasureUnit)
+                .Include(o => o.Materials)
+                    .ThenInclude(m => m.Material)
+                        .ThenInclude(mu => mu.MeasureUnit)
                 ;
 
-        public void AddOrder(Order order)
+        public override Order Clone(Order source)
         {
-            ValidateOrder(order);
-            _db.Orders.Add(order);
-            _db.SaveChanges();
-        }
-
-        public void UpdateOrder(Order updated)
-        {
-            ValidateOrder(updated);
-
-            var existing = _db.Orders.First(o => o.Id == updated.Id);
-
-            existing.CustomerId = updated.CustomerId;
-            existing.EmployeeId = updated.EmployeeId;
-            existing.ConstructionId = updated.ConstructionId;
-            existing.Status = updated.Status;
-            existing.CreationdDate = updated.CreationdDate;
-            existing.CompletionDate = updated.CompletionDate;
-            existing.Description = updated.Description;
-
-            _db.SaveChanges();
-        }
-
-
-        public void RemoveOrder(Order order)
-        {
-            _db.Orders.Remove(order);
-            try
+            return new Order
             {
-                _db.SaveChanges();
-            }
-            catch(DbUpdateException ex)
-            {
-                throw new InvalidOperationException(
-                    "Невозможно удалить заказ: " +
-                    "он содержит связанные работы или материалы.",
-                    ex);
-            }
+                Id = source.Id,
+                CustomerId = source.CustomerId,
+                EmployeeId = source.EmployeeId,
+                ConstructionId = source.ConstructionId,
+                Status = source.Status,
+                CreationdDate = source.CreationdDate,
+                CompletionDate = source.CompletionDate,
+                Description = source.Description,
+
+                Customer = source.Customer,
+                Employee = source.Employee,
+                Construction = source.Construction
+            };
         }
 
-        public void ValidateOrder(Order order)
+        public override void CopyTo(Order source, Order target)
+        {
+            target.CustomerId = source.CustomerId;
+            target.EmployeeId = source.EmployeeId;
+            target.ConstructionId = source.ConstructionId;
+            target.Status = source.Status;
+            target.CreationdDate = source.CreationdDate;
+            target.CompletionDate = source.CompletionDate;
+            target.Description = source.Description;
+
+            target.Customer = source.Customer;
+            target.Employee = source.Employee;
+            target.Construction = source.Construction;
+        }
+
+        public override void Validate(Order order)
         {
             if(string.IsNullOrWhiteSpace(order.Description))
                 throw new ArgumentException("Описание заказа обязательно");
 
-            if(order.CustomerId <= 0)
-                throw new ArgumentException("Заказ должен быть привязан к заказчику");
+            if(order.CustomerId == 0)
+                throw new ArgumentException("Клиент не выбран");
 
-            if(order.EmployeeId <= 0)
-                throw new ArgumentException("Не указан ответственный сотрудник");
+            if(order.EmployeeId == 0)
+                throw new ArgumentException("Сотрудник не выбран");
 
-            if(order.ConstructionId <= 0)
-                throw new ArgumentException("Не указан объект строительства");
-
-            // при необходимости — проверка на наличие работ или материалов
-            // if (!order.Works.Any() && !order.Materials.Any())
-            //     throw new ArgumentException("В заказе должны быть указаны работы или материалы");
+            if(order.ConstructionId == 0)
+                throw new ArgumentException("Объект не выбран");
         }
+
+        protected override string GetDeleteErrorMessage(Order order)
+            => "Невозможно удалить заказ: " 
+            + "он содержит связанные работы или материалы.";
     }
 }

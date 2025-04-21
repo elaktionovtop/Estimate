@@ -1,4 +1,4 @@
-﻿<Window x:Class="Estimate.Views.OrderWindow"
+﻿<Window x:Class="Estimate.Views.ItemOrderWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Заказ" Height="450" Width="500"
@@ -20,37 +20,39 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Описание:" VerticalAlignment="Center" Margin="5"/>
         <TextBox  x:Name="DescriptionTextBox"
-                  Grid.Row="0" Grid.Column="1" Text="{Binding Description}" Margin="5"
-                  Loaded="DescriptionTextBox_Loaded"/>
+                Grid.Row="0" Grid.Column="1" Text="{Binding Item.Description}" Margin="5"
+                Loaded="DescriptionTextBox_Loaded"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Клиент:" VerticalAlignment="Center" Margin="5"/>
         <ComboBox Grid.Row="1" Grid.Column="1"
                   ItemsSource="{Binding Customers}"
-                  SelectedItem="{Binding SelectedCustomer}"
+                  SelectedItem="{Binding Item.Customer}"
                   DisplayMemberPath="Name" Margin="5"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Сотрудник:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Объект:" VerticalAlignment="Center" Margin="5"/>
         <ComboBox Grid.Row="2" Grid.Column="1"
-                  ItemsSource="{Binding Employees}"
-                  SelectedItem="{Binding SelectedEmployee}"
+                  ItemsSource="{Binding Constructions}"
+                  SelectedItem="{Binding Item.Construction}"
                   DisplayMemberPath="Name" Margin="5"/>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Объект:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Сотрудник:" VerticalAlignment="Center" Margin="5"/>
         <ComboBox Grid.Row="3" Grid.Column="1"
-                  ItemsSource="{Binding Constructions}"
-                  SelectedItem="{Binding SelectedConstruction}"
+                  ItemsSource="{Binding Employees}"
+                  SelectedItem="{Binding Item.Employee}"
                   DisplayMemberPath="Name" Margin="5"/>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Дата создания:" VerticalAlignment="Center" Margin="5"/>
         <DatePicker Grid.Row="4" Grid.Column="1"
-                    SelectedDate ="{Binding CreationDateTime}" Margin="5"/>
+                    SelectedDate ="{Binding Item.CreationDateTime}" 
+                    Margin="5"/>
 
         <TextBlock Grid.Row="5" Grid.Column="0" Text="Дата завершения:" VerticalAlignment="Center" Margin="5"/>
         <DatePicker Grid.Row="5" Grid.Column="1"
-                    SelectedDate="{Binding CompletionDateTime}" Margin="5"/>
+                    SelectedDate="{Binding Item.CompletionDateTime}" 
+                    Margin="5"/>
 
         <TextBlock Grid.Row="6" Grid.Column="0" Text="Статус:" VerticalAlignment="Center" Margin="5"/>
         <ComboBox Grid.Row="6" Grid.Column="1"
@@ -58,6 +60,7 @@
                   SelectedItem="{Binding SelectedStatus}"
                   Margin="5">
         </ComboBox>
+
 
         <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal"
                     HorizontalAlignment="Right" Margin="0,20,0,0">

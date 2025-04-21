@@ -30,7 +30,7 @@ namespace EstimateTest
                 ConstructionId = 1,
                 Description = "Order_descr_1"
             };
-            service.AddOrder(newOrder);
+            service.Add(newOrder);
 
             Assert.Single(context.Orders);
             Assert.Equal("Order_descr_1",
@@ -46,7 +46,7 @@ namespace EstimateTest
             var service = new OrderService(context);
 
             Assert.Throws<ArgumentException>(() =>
-                service.AddOrder(new Order
+                service.Add(new Order
                 {
                     Description = description
                 }));

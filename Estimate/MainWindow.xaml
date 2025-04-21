@@ -10,35 +10,35 @@
         <Window.InputBindings>
             <KeyBinding Key="N"
                     Modifiers="Control"
-                    Command="{Binding CreateOrderCommand}" />
-
-            <KeyBinding Key="E"
-                    Modifiers="Control"
-                    Command="{Binding EditOrderCommand}" />
-
-            <KeyBinding Key="D"
-                    Modifiers="Control"
-                    Command="{Binding DeleteOrderCommand}" />
+                    Command="{Binding CreateItemCommand}" />
         </Window.InputBindings>
     
         <StackPanel>
         <Menu>
             <MenuItem Header="Заказы">
-                <MenuItem Command="{Binding CreateOrderCommand}"
-                    Header="Добавить"
-                    InputGestureText="Ctrl+N"
+                <MenuItem Command="{Binding CreateItemCommand}"
+                          Header="Добавить"
+                          InputGestureText="Ctrl+N"
                           />
-                <MenuItem Command="{Binding EditOrderCommand}"
-                    Header="Редактировать"
-                    InputGestureText="Enter" 
+                <MenuItem Command="{Binding EditItemCommand}"
+                          Header="Редактировать"
+                          InputGestureText="Enter" 
                           />
-                <MenuItem Command="{Binding DeleteOrderCommand}"
-                    Header="Удалить"
-                    InputGestureText="Del" 
+                <MenuItem Command="{Binding DeleteItemCommand}"
+                          Header="Удалить"
+                          InputGestureText="Del" 
                           />
             </MenuItem>
             <MenuItem Header="Справочники">
-                <!-- пока без подменю -->
+                    <MenuItem Command="{Binding LoadCustomersCommand}"
+                          Header="Заказчики"
+                          />
+                    <MenuItem Command="{Binding LoadConstractionsCommand}"
+                          Header="Объекты"
+                          />
+                <MenuItem Command="{Binding LoadEmployeesCommand}"
+                          Header="Сотрудники"
+                          />
             </MenuItem>
         </Menu>
 
@@ -59,8 +59,8 @@
                           CanUserDeleteRows="False"
                           Height="200"
                           IsReadOnly="True"
-                          ItemsSource="{Binding Orders}"
-                          SelectedItem="{Binding SelectedOrder,
+                          ItemsSource="{Binding Items}"
+                          SelectedItem="{Binding SelectedItem,
                                        Mode=TwoWay}"
                           SelectionChanged="Grid_SelectionChanged"
                           PreviewKeyDown="DataGrid_PreviewKeyDown"
@@ -73,6 +73,9 @@
                     </DataGrid.ColumnHeaderStyle>
                 
                     <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Description}"
+                                            Header="Описание"
+                                            />
                         <DataGridTextColumn Binding="{Binding Customer.Name}"
                                             Header="Клиент"
                                             />
@@ -111,9 +114,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Binding="{Binding Description}"
-                                            Header="Описание"
-                                            />
+                        
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

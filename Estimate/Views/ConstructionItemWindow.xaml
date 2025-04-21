@@ -1,0 +1,44 @@
+﻿<Window x:Class="Estimate.Views.ConstructionItemWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Estimate.ViewModels"
+
+        Title="Объект" Height="300" Width="600">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Поле для имени -->
+        <TextBlock Text="Название:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="0,0,10,0"/>
+        <TextBox x:Name="NameTextBox"
+            Text="{Binding Item.Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1"
+          Loaded="NameTextBox_Loaded"/>
+
+        <!-- Поле для адреса -->
+        <TextBlock Text="Адрес:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Margin="0,10,10,0"/>
+        <TextBox Text="{Binding Item.Address, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0"/>
+
+        <!-- Поле для описания -->
+        <TextBlock Text="Описание:" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Margin="0,10,10,0"/>
+        <TextBox Text="{Binding Item.Description, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0"/>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Сохранить" Width="100" Margin="5"
+                    Command="{Binding ApplyCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    IsDefault="True"/>
+            <Button Content="Отмена" Width="100" Margin="5"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

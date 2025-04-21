@@ -30,19 +30,19 @@ namespace Estimate.Data
             base.OnModelCreating(modelBuilder);
 
             // OrderWork: каждый Order может иметь много строк (работ)
+            // Нельзя удалить Order, если есть строки
             modelBuilder.Entity<OrderWork>()
                 .HasOne(ow => ow.Order)
                 .WithMany(o => o.Works)
                 .HasForeignKey(ow => ow.OrderId)
-                .OnDelete(DeleteBehavior.Restrict); // нельзя удалить Order, если есть строки
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrderWork>()
                 .HasOne(ow => ow.Work)
                 .WithMany()
                 .HasForeignKey(ow => ow.WorkId)
-                .OnDelete(DeleteBehavior.Restrict); // нельзя удалить Work, если он использован
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // OrderMaterial: аналогично
             modelBuilder.Entity<OrderMaterial>()
                 .HasOne(om => om.Order)
                 .WithMany(o => o.Materials)
@@ -74,7 +74,8 @@ namespace Estimate.Data
         {
             public AppDbContext CreateDbContext(string[] args)
             {
-                var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+                var optionsBuilder = 
+                    new DbContextOptionsBuilder<AppDbContext>();
                 optionsBuilder.UseSqlServer(ConnectionString);
                 return new AppDbContext(optionsBuilder.Options);
             }

@@ -29,7 +29,6 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         // Регистрируем зависимости
-
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(ContextFactory.ConnectionString),
             contextLifetime: ServiceLifetime.Singleton,
@@ -39,16 +38,36 @@ public partial class App : Application
            services.AddTransient<LoginViewModel>();
            services.AddTransient<LoginWindow>();
 
-        services.AddSingleton<IOrderService, OrderService>();
-        services.AddTransient<MainViewModel>();
+        //services.AddSingleton<ICrudService<Customer>, CustomerService>();
+        //services.AddSingleton<ICrudService
+        //    <Construction>, ConstructionService>();
+        //services.AddSingleton<ICrudService<Employee>, EmployeeService>();
+
+        services.AddSingleton<OrderService, OrderService>();
+        services.AddTransient<OrderListViewModel>();
         services.AddTransient<MainWindow>();
+
+        services.AddSingleton<CustomerService, CustomerService>();
+        services.AddTransient<CustomerListViewModel>();
+        services.AddTransient<CustomerListWindow>();
+
+        services.AddSingleton<ConstructionService, ConstructionService>();
+        services.AddTransient<ConstructionListViewModel>();
+        services.AddTransient<ConstructionListWindow>();
+
+        services.AddSingleton<EmployeeService, EmployeeService > ();
+        services.AddTransient <EmployeeListViewModel > ();
+        services.AddTransient <EmployeeListWindow > ();
+
 
         Services = services.BuildServiceProvider();
 
         // Проверка данных БД
         DbVerification.Perform(); 
 
+        // для отладки отключаем авторизацию
         //Services.GetRequiredService<LoginWindow>().Show();
+
         App.Services.GetRequiredService<MainWindow>().Show();
 
     }

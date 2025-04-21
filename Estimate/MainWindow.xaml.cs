@@ -14,15 +14,13 @@ using System.Windows.Shapes;
 
 namespace Estimate;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow : Window
 {
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<MainViewModel>();
+        DataContext = App.Services
+            .GetRequiredService<OrderListViewModel>();
     }
 
     private void Grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -31,22 +29,25 @@ public partial class MainWindow : Window
         if(grid.SelectedItem is not null)
         {
             grid.ScrollIntoView(grid.SelectedItem);
+            grid.Focus();
         }
     }
 
     private void DataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        var vm = DataContext as MainViewModel;
+        var vm = DataContext as OrderListViewModel;
 
-        if(e.Key == Key.Enter && vm?.EditOrderCommand.CanExecute(null) == true)
+        if(e.Key == Key.Enter 
+            && vm?.EditItemCommand.CanExecute(null) == true)
         {
-            vm.EditOrderCommand.Execute(null);
+            vm.EditItemCommand.Execute(null);
             e.Handled = true;
         }
 
-        if(e.Key == Key.Delete && vm?.DeleteOrderCommand.CanExecute(null) == true)
+        if(e.Key == Key.Delete 
+            && vm?.DeleteItemCommand.CanExecute(null) == true)
         {
-            vm.DeleteOrderCommand.Execute(null);
+            vm.DeleteItemCommand.Execute(null);
             e.Handled = true;
         }
     }

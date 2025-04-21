@@ -1,7 +1,5 @@
 ﻿using Estimate.ViewModels;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,21 +16,18 @@ using System.Windows.Shapes;
 
 namespace Estimate.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для OrderWindow.xaml
-    /// </summary>
-    public partial class OrderWindow : Window
+    public partial class EmployeeItemWindow : Window
     {
-        public OrderWindow(OrderViewModel orderViewModel)
+        public EmployeeItemWindow(EmployeeItemViewModel employeeViewModel)
         {
             InitializeComponent();
-            DataContext = orderViewModel;
+            DataContext = employeeViewModel;
         }
 
-        private void DescriptionTextBox_Loaded(object sender, RoutedEventArgs e)
+        private void NameTextBox_Loaded(object sender, RoutedEventArgs e)
         {
-            DescriptionTextBox.Focus();
-            DescriptionTextBox.SelectAll();
+            NameTextBox.Focus();
+            NameTextBox.SelectAll();
         }
     }
 }

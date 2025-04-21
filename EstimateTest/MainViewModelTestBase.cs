@@ -14,7 +14,7 @@ namespace EstimateTest
     public abstract class MainViewModelTestBase
     {
         protected readonly List<Order> _dbOrders;
-        protected readonly Mock<IOrderService> _orderServiceMock;
+        protected readonly Mock<OrderService> _orderServiceMock;
 
         protected MainViewModel ViewModel { get; private set; }
 
@@ -28,9 +28,9 @@ namespace EstimateTest
                 CustomerId = 1, EmployeeId = 1, ConstructionId = 1 }
         };
 
-            _orderServiceMock = new Mock<IOrderService>();
+            _orderServiceMock = new Mock<OrderService>();
             _orderServiceMock
-                .Setup(s => s.GetAllOrders())
+                .Setup(s => s.GetAll())
                 .Returns(_dbOrders);
 
             ViewModel = new TestableMainViewModel(_orderServiceMock.Object, this);
@@ -46,7 +46,7 @@ namespace EstimateTest
         {
             private readonly MainViewModelTestBase _test;
 
-            public TestableMainViewModel(IOrderService service, MainViewModelTestBase test)
+            public TestableMainViewModel(OrderService service, MainViewModelTestBase test)
                 : base(service)
             {
                 _test = test;

@@ -21,7 +21,7 @@ namespace EstimateTest
             ViewModel.EditOrderCommand.Execute(null);
 
             // Assert
-            _orderServiceMock.Verify(s => s.UpdateOrder(It.IsAny<Order>()), Times.Never);
+            _orderServiceMock.Verify(s => s.Update(It.IsAny<Order>()), Times.Never);
             Assert.Equal(2, ViewModel.Orders.Count); // ничего не удалено, не заменено
         }
     }

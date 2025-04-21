@@ -59,12 +59,14 @@ namespace Estimate.Models
                 new(OrderStatus.Completed, "Завершён"),
                 new(OrderStatus.Cancelled, "Отменён")
             };
+        
+        [NotMapped]
+        EnumDisplay<OrderStatus> SelectedStatus;
 
         [NotMapped]
-        public string StatusText => 
+        public string StatusText =>
             Statuses.FirstOrDefault(s => s.Value == Status).Display;
 
-        DateTime creationDateTime;
         [NotMapped]
         public DateTime CreationDateTime
         {
@@ -72,7 +74,6 @@ namespace Estimate.Models
             set=> CreationdDate = DateOnly.FromDateTime(value);
         }
 
-        DateTime? completionDateTime;
         [NotMapped]
         public DateTime? CompletionDateTime
         {
