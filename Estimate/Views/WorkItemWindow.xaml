@@ -1,7 +1,7 @@
-﻿<Window x:Class="Estimate.Views.EmployeeItemWindow"
+﻿<Window x:Class="Estimate.Views.WorkItemWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Сотрудник" Height="450" Width="600"
+        Title="WorkItemWindow" Height="450" Width="600"
         WindowStartupLocation="CenterOwner">
 
     <Grid Margin="10">
@@ -18,22 +18,25 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Имя:"
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Наименование:"
                    VerticalAlignment="Center" Margin="5"/>
         <TextBox  x:Name="NameTextBox"
                   Grid.Row="0" Grid.Column="1" Text="{Binding Item.Name}"
                   Margin="5"
                   Loaded="NameTextBox_Loaded"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Должность:"
-                   VerticalAlignment="Center" Margin="5"/>
-        <TextBox Grid.Row="1" Grid.Column="1" 
-                 Text="{Binding Item.Position}" Margin="5"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Единица измерения:" VerticalAlignment="Center" Margin="5"/>
+        <ComboBox Grid.Row="1" Grid.Column="1"
+                  ItemsSource="{Binding Units}"
+                  SelectedItem="{Binding Item.MeasureUnit}"
+                  DisplayMemberPath="Name" Margin="5"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Телефон:" 
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Цена:" 
                    VerticalAlignment="Center" Margin="5"/>
         <TextBox Grid.Row="2" Grid.Column="1" 
-                 Text="{Binding Item.Phone}" Margin="5"/>
+                 Text="{Binding Item.Price}" Margin="5"
+                 HorizontalContentAlignment="Right"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Описание:"
                    VerticalAlignment="Center" Margin="5"/>

@@ -87,8 +87,8 @@ namespace Estimate.Services
 
         public abstract void Validate(T entity);
 
-        protected virtual string GetDeleteErrorMessage(T entity)
-            => $"Невозможно удалить объект типа {typeof(T).Name}" +
-               $" — он связан с другими данными.";
+        protected virtual string GetDeleteErrorMessage(T entity) => "Ошибка при удалении";
+            //=> $"Невозможно удалить объект типа {typeof(T).Name}" +
+            //   $" — он связан с другими данными.";
     }
 }

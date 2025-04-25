@@ -15,12 +15,13 @@ namespace Estimate.Services
     {
         public OrderService(AppDbContext db) : base(db) { }
 
-        public IEnumerable<Customer> GetAllCustomers() 
-            => _db.Customers;
-        public IEnumerable<Employee> GetAllEmployees() 
-            => _db.Employees;
-        public IEnumerable<Construction> GetAllConstructions() 
-            => _db.Constructions;
+        // удалить,когда будут соответствующие сервисы
+        //public IEnumerable<Customer> GetAllCustomers() 
+        //    => _db.Customers;
+        //public IEnumerable<Employee> GetAllEmployees() 
+        //    => _db.Employees;
+        //public IEnumerable<Construction> GetAllConstructions() 
+        //    => _db.Constructions;
 
         public override IEnumerable<Order> GetAll() 
             => _db.Orders
@@ -69,6 +70,7 @@ namespace Estimate.Services
             target.Construction = source.Construction;
         }
 
+        // можно проверить ссылки Customver и т.д.
         public override void Validate(Order order)
         {
             if(string.IsNullOrWhiteSpace(order.Description))

@@ -13,8 +13,8 @@ namespace Estimate.Services
     {
         public CustomerService(AppDbContext db) : base(db) { }
 
-        public override IEnumerable<Customer> GetAll()
-            => _db.Customers;
+        //public override IEnumerable<Customer> GetAll()
+        //    => _db.Customers;
 
         public override Customer Clone(Customer source) => new()
         {

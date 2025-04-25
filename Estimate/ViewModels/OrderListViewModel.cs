@@ -19,10 +19,8 @@ namespace Estimate.ViewModels
         }
 
         [RelayCommand]
-        private void LoadCustomers()
-        {
-            new CustomerListWindow().ShowDialog();
-        }
+        private void LoadCustomers() 
+            => new CustomerListWindow().ShowDialog();
 
         [RelayCommand]
         private void LoadConstractions()
@@ -36,6 +34,18 @@ namespace Estimate.ViewModels
             new EmployeeListWindow().ShowDialog();
         }
 
+        [RelayCommand]
+        private void LoadMeasureUnits()
+        {
+            new MeasureUnitListWindow().ShowDialog();
+        }
+
+        [RelayCommand]
+        private void LoadWorks()
+        {
+            new WorkListWindow().ShowDialog();
+        }
+
         protected override OrderItemViewModel CreateItemViewModel(CrudService<Order> service, Order item)
         {
             return new OrderItemViewModel((OrderService)service, item);
@@ -47,6 +57,6 @@ namespace Estimate.ViewModels
         }
 
         protected override bool? ShowItemDialog(ItemViewModel<Order> itemViewModel)
-            => new ItemOrderWindow((OrderItemViewModel)itemViewModel).ShowDialog();
+            => new OrderItemWindow((OrderItemViewModel)itemViewModel).ShowDialog();
     }
 }

@@ -36,8 +36,14 @@
                     <MenuItem Command="{Binding LoadConstractionsCommand}"
                           Header="Объекты"
                           />
-                <MenuItem Command="{Binding LoadEmployeesCommand}"
+                    <MenuItem Command="{Binding LoadEmployeesCommand}"
                           Header="Сотрудники"
+                          />
+                    <MenuItem Command="{Binding LoadMeasureUnitsCommand}"
+                              Header="Единицы измерения"
+                          />
+                <MenuItem Command="{Binding LoadWorksCommand}"
+                              Header="Виды работ"
                           />
             </MenuItem>
         </Menu>
@@ -47,7 +53,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" 
+            <StackPanel Grid.Column="0"
+                        Grid.Row="0"
                         Margin="10"
                         >
                 <TextBlock FontWeight="Bold"
@@ -107,7 +114,7 @@
                                             Header="Статус"
                                             />
                         <DataGridTextColumn Binding="{Binding Total}"
-                                            Header="Итого">
+                                            Header="Стоимость">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>

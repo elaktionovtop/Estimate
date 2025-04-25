@@ -39,7 +39,7 @@
                             >
                     <TextBlock FontWeight="Bold"
                                Margin="5"
-                               Text="Заказы"
+                               Text="Заказчики"
                                />
                     <DataGrid AutoGenerateColumns="False"
                               CanUserAddRows="False"
@@ -67,7 +67,7 @@
                                                 Header="Телефон"
                                                 />
                             <DataGridTextColumn Binding="{Binding Email}"
-                                                Header="Телефон"
+                                                Header="Email"
                                                 />
                             <DataGridTextColumn Binding="{Binding Description}"
                                                 Header="Описание"

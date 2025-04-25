@@ -27,6 +27,8 @@ namespace Estimate.Data
             VerifyOrders();
             VerifyMeasureUnits();
             VerifyWorks();
+            VerifyMaterials();
+            VerifyOrderWorks();
 
             _db.SaveChanges();
         }
@@ -152,11 +154,11 @@ namespace Estimate.Data
                 {
                     new MeasureUnit
                     {
-                        Name = "штук",
+                        Name = "штук"
                     },
                     new MeasureUnit
                     {
-                        Name = "кг",
+                        Name = "кг"
                     }
                 };
                 _db.MeasureUnits.AddRange(measureUnits);
@@ -169,18 +171,18 @@ namespace Estimate.Data
             {
                 var works = new Work[]
                 {
-                new Work
-                {
-                    UnitId = 1,
-                    Name = "Ремонт_1",
-                    Price = 1000,
-                },
-                new Work
-                {
-                    UnitId = 1,
-                    Name = "Ремонт_2",
-                    Price = 2000,
-                }
+                    new Work
+                    {
+                        UnitId = 1,
+                        Name = "Ремонт_1",
+                        Price = 1000,
+                    },
+                    new Work
+                    {
+                        UnitId = 1,
+                        Name = "Ремонт_2",
+                        Price = 2000,
+                    }
                 };
                 _db.Works.AddRange(works);
             }
@@ -192,21 +194,45 @@ namespace Estimate.Data
             {
                 var materials = new Material[]
                 {
-                new Material
-                {
-                    UnitId = 2,
-                    Name = "Материал_1",
-                    Price = 1000,
-                },
-                new Material
-                {
-                    UnitId = 2,
-                    Name = "Материал_2",
-                    Price = 2000,
-                }
+                    new Material
+                    {
+                        UnitId = 2,
+                        Name = "Материал_1",
+                        Price = 1000,
+                    },
+                    new Material
+                    {
+                        UnitId = 2,
+                        Name = "Материал_2",
+                        Price = 2000,
+                    }
                 };
                 _db.Materials.AddRange(materials);
             }
         }
+
+        static void VerifyOrderWorks()
+        {
+            if(!_db.OrderWorks.Any())
+            {
+                var orderWorks = new OrderWork[]
+                {
+                new OrderWork
+                {
+                    OrderId = 1,
+                    WorkId = 1,
+                    Quantity = 1
+                },
+                new OrderWork
+                {
+                    OrderId = 1,
+                    WorkId = 2,
+                    Quantity = 2
+                }
+                };
+                _db.OrderWorks.AddRange(orderWorks);
+            }
+        }
+
     }
 }

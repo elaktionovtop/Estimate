@@ -24,9 +24,9 @@ namespace Estimate.Models
         public DateOnly? CompletionDate { get; set; }
         public string Description { get; set; }
 
-        public Customer Customer { get; set; }
-        public Employee Employee { get; set; }
-        public Construction Construction { get; set; }
+        public Customer? Customer { get; set; }
+        public Employee? Employee { get; set; }
+        public Construction? Construction { get; set; }
         
         public List<OrderWork> Works { get; set; } = new();
         public List<OrderMaterial> Materials { get; set; } = new();

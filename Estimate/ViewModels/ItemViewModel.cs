@@ -17,10 +17,10 @@ namespace Estimate.ViewModels
     {
         readonly protected CrudService<T> _service ;
 
-        public T Original { get; set; }
+        private T Original { get; set; }
 
         [ObservableProperty]
-        public T _item;
+         T _item;
 
         public ItemViewModel(CrudService<T> service, T item)
         {

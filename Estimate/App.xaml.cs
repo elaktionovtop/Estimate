@@ -59,6 +59,17 @@ public partial class App : Application
         services.AddTransient <EmployeeListViewModel > ();
         services.AddTransient <EmployeeListWindow > ();
 
+        services.AddSingleton<MeasureUnitService, MeasureUnitService>();
+        services.AddTransient<MeasureUnitListViewModel>();
+        services.AddTransient<MeasureUnitListWindow>();
+
+        services.AddSingleton<WorkService, WorkService>();
+        services.AddTransient<WorkListViewModel>();
+        services.AddTransient<WorkListWindow>();
+
+        services.AddSingleton<OrderWorkService, OrderWorkService>();
+        services.AddTransient<OrderWorkListViewModel>();
+        //services.AddTransient<OrderWorkListWindow>();
 
         Services = services.BuildServiceProvider();
 

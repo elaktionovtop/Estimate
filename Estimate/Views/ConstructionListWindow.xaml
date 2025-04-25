@@ -59,7 +59,7 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}"
-                                                Header="Имя"
+                                                Header="Наименование"
                                                 />
                         <DataGridTextColumn Binding="{Binding Address}"
                                                 Header="Адврес"
